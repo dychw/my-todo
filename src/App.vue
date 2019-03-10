@@ -1,19 +1,19 @@
 <template>
   <div id="app">
     <h1>ToDoリスト</h1>
-    <TodoList msg="Welcome to Your Vue.js App"/>
+    <TodoList></TodoList>
   </div>
 </template>
 
 <script>
-import TodoList from './components/TodoList.vue'
+import TodoList from "./components/TodoList.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     TodoList
   }
-}
+};
 </script>
 
 <style>

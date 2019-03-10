@@ -1,17 +1,23 @@
 <template>
   <div>
-    <input type="radio" id="one" value="One" v-model="picked">全て
-    <input type="radio" id="one" value="One" v-model="picked">作業中
-    <input type="radio" id="one" value="One" v-model="picked">完了
+    <label v-for="filter in filters" :key="filter.id">
+      <input type="radio" v-model="selectedFilter" :value="filter.value">
+      {{filter.label}}
+    </label>
     <table>
       <tbody>
         <th>ID</th>
         <th>コメント</th>
-        <th colspan="2">状態</th>
-        <tr v-for="todo in todos" v-bind:key="todo.id">
+        <th>状態</th>
+        <tr v-for="todo in filterTodos" :key="todo.id">
           <td>{{ todo.id }}</td>
-          <td>{{ todo.comment }}</td>
-          <td>{{ todo.state }}</td>
+          <td>{{ todo.title }}</td>
+          <td>
+            <button @click="todo.state='done'">{{todo.state}}</button>
+          </td>
+          <td>
+            <button @click="removeTodo(todo.id)">削除</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -27,12 +33,42 @@ export default {
   data() {
     return {
       inputTodo: "",
-      todos: [{ id:0,comment: "def",state:"b" }]
+      todos: [],
+      filters: [
+        { value: "all", label: "すべて" },
+        { value: "wip", label: "作業中" },
+        { value: "done", label: "完了" }
+      ],
+      selectedFilter: "all"
     };
   },
   methods: {
     addTodo: function() {
-      this.todos.push({ title: this.inputTodo });
+      if (this.inputTodo.match(/^\s*$/) === null) {
+        var id_max = Math.max.apply(
+          Math,
+          this.todos.map(function(o) {
+            return o.id;
+          })
+        );
+        this.todos.push({
+          id: this.todos.length === 0 ? 0 : id_max + 1,
+          title: this.inputTodo,
+          state: "wip"
+        });
+      }
+    },
+    removeTodo: function(id) {
+      this.todos.splice(id, 1);
+    }
+  },
+  computed: {
+    filterTodos: function() {
+      return this.todos.filter(function(el) {
+        return this.selectedFilter === "all"
+          ? true
+          : this.selectedFilter === el.state;
+      }, this);
     }
   }
 };
