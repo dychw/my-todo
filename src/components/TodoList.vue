@@ -1,7 +1,7 @@
 <template>
   <div>
     <label v-for="filter in filters" :key="filter.id">
-      <input type="radio" v-model="selectedFilter" :value="filter.value">
+      <input type="radio" v-model="selectedFilter" :value="filter.label">
       {{filter.label}}
     </label>
     <table>
@@ -13,7 +13,7 @@
           <td>{{ todo.id }}</td>
           <td>{{ todo.title }}</td>
           <td>
-            <button @click="todo.state='done'">{{todo.state}}</button>
+            <button @click="todo.state='完了'">{{todo.state}}</button>
           </td>
           <td>
             <button @click="removeTodo(todo.id)">削除</button>
@@ -34,12 +34,8 @@ export default {
     return {
       inputTodo: "",
       todos: [],
-      filters: [
-        { value: "all", label: "すべて" },
-        { value: "wip", label: "作業中" },
-        { value: "done", label: "完了" }
-      ],
-      selectedFilter: "all"
+      filters: [{ label: "すべて" }, { label: "作業中" }, { label: "完了" }],
+      selectedFilter: "すべて"
     };
   },
   methods: {
@@ -54,8 +50,9 @@ export default {
         this.todos.push({
           id: this.todos.length === 0 ? 0 : id_max + 1,
           title: this.inputTodo,
-          state: "wip"
+          state: "作業中"
         });
+        this.inputTodo = "";
       }
     },
     removeTodo: function(id) {
@@ -65,7 +62,7 @@ export default {
   computed: {
     filterTodos: function() {
       return this.todos.filter(function(el) {
-        return this.selectedFilter === "all"
+        return this.selectedFilter === "すべて"
           ? true
           : this.selectedFilter === el.state;
       }, this);
