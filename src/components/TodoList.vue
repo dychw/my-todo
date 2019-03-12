@@ -22,7 +22,7 @@
       </tbody>
     </table>
     <h2>新規タスクの追加</h2>
-    <input type="text" class="input" v-model="inputTodo">
+    <input type="text" ref="inputTodo">
     <button @click="addTodo">追加</button>
   </div>
 </template>
@@ -32,27 +32,31 @@ export default {
   name: "TodoList",
   data() {
     return {
-      inputTodo: "",
       todos: [],
+      //フィルタの条件
       filters: [{ label: "すべて" }, { label: "作業中" }, { label: "完了" }],
+      //フィルタの初期値
       selectedFilter: "すべて"
     };
   },
   methods: {
     addTodo: function() {
-      if (this.inputTodo.match(/^\s*$/) === null) {
+      var inputTodo = this.$refs.inputTodo;
+      //入力が空なら
+      if (inputTodo.value.match(/^\s*$/) === null) {
         var id_max = Math.max.apply(
           Math,
           this.todos.map(function(o) {
             return o.id;
           })
         );
+        //ID_最大値+1がID_新の値
         this.todos.push({
           id: this.todos.length === 0 ? 0 : id_max + 1,
-          title: this.inputTodo,
+          title: inputTodo.value,
           state: "作業中"
         });
-        this.inputTodo = "";
+        inputTodo.value = "";
       }
     },
     removeTodo: function(id) {
